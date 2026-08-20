@@ -1,0 +1,7 @@
+.vscode/
+venv/
+build/
+dist/
+Classpect Symbolizer.spec
+Classpect Symbolizer.exe
+Classpect Symbolizer.zip
