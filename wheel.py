@@ -1,6 +1,4 @@
 import math
-import base64
-from io import BytesIO
 from nicegui import binding, native, ui
 from PIL import Image, ImageDraw, ImageOps
 
@@ -91,46 +89,29 @@ def output_image():
     # Classes
     for i in range(24):
         color = aspects[bound_values.aspect2]["ringcolor"] if bound_values.multiaspect and i%2==0 else aspects[bound_values.aspect1]["ringcolor"]
+        
+        draw.pieslice(bbox,start=-7.5+(i*15),end=7.5+(i*15),fill=color)
+        
+
+        spoke = Image.open(hero_classes[bound_values.class2]["img"]).convert("RGBA").resize(resize)
         if not bound_values.multiclass or i%2==0 : 
-            draw.pieslice(bbox,start=-7.5+(i*15),end=7.5+(i*15),fill=color)
-
             spoke = Image.open(hero_classes[bound_values.class1]["img"]).convert("RGBA").resize(resize)
-            r,g,b,alpha = spoke.split()
-            bw_spoke=spoke.convert("L")
-            new_spoke = ImageOps.colorize(bw_spoke, black=color, white=color)
-            spoke = Image.merge("RGBA",(*new_spoke.split()[:3],alpha))
+        r,g,b,alpha = spoke.split()
+        bw_spoke=spoke.convert("L")
+        new_spoke = ImageOps.colorize(bw_spoke, black=color, white=color)
+        spoke = Image.merge("RGBA",(*new_spoke.split()[:3],alpha))
 
-            angle_deg = i*15
-            angle_rad = math.radians(angle_deg)
-            x = cx + int(radius * math.cos(angle_rad))
-            y = cy + int(radius * math.sin(angle_rad))
+        angle_deg = i*15
+        angle_rad = math.radians(angle_deg)
+        x = cx + int(radius * math.cos(angle_rad))
+        y = cy + int(radius * math.sin(angle_rad))
 
-            rot_angle = 270- angle_deg
+        rot_angle = 270- angle_deg
 
-            rotated_spoke = spoke.rotate(rot_angle, expand=True)
-            pw, ph = rotated_spoke.size
+        rotated_spoke = spoke.rotate(rot_angle, expand=True)
+        pw, ph = rotated_spoke.size
 
-            img.paste(rotated_spoke,(x-pw//2,y - ph//2),rotated_spoke)
-        else:
-            draw.pieslice(bbox,start=-7.5+(i*15),end=7.5+(i*15),fill=color)
-
-            spoke = Image.open(hero_classes[bound_values.class2]["img"]).convert("RGBA").resize(resize)
-            r,g,b,alpha = spoke.split()
-            bw_spoke=spoke.convert("L")
-            new_spoke = ImageOps.colorize(bw_spoke, black=color, white=color)
-            spoke = Image.merge("RGBA",(*new_spoke.split()[:3],alpha))
-
-            angle_deg = i*15
-            angle_rad = math.radians(angle_deg)
-            x = cx + int(radius * math.cos(angle_rad))
-            y = cy + int(radius * math.sin(angle_rad))
-
-            rot_angle = 270- angle_deg
-
-            rotated_spoke = spoke.rotate(rot_angle, expand=True)
-            pw, ph = rotated_spoke.size
-
-            img.paste(rotated_spoke,(x-pw//2,y - ph//2),rotated_spoke)
+        img.paste(rotated_spoke,(x-pw//2,y - ph//2),rotated_spoke)
 
     # Aspects
     aspect1 = Image.open(aspects[bound_values.aspect1]["img"])
